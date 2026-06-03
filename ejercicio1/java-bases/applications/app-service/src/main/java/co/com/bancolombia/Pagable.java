@@ -1,0 +1,17 @@
+package co.com.bancolombia;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+
+@SpringBootApplication
+@ConfigurationPropertiesScan
+public class Pagable {
+
+    double calcularPago();
+
+    double aplicarDescuento(double porcentaje);
+
+    String descripcion();
+
+}
