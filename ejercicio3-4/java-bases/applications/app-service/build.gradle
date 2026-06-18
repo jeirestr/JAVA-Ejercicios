@@ -1,0 +1,37 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    runtimeOnly('org.springframework.boot:spring-boot-devtools')
+    testImplementation 'com.tngtech.archunit:archunit:1.4.1'
+    testImplementation 'tools.jackson.core:jackson-databind'
+}
+
+tasks.register('runEjercicio3', JavaExec) {
+    group = 'application'
+    description = 'Ejecuta co.com.bancolombia.ejercicio3.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'co.com.bancolombia.ejercicio3.Main'
+}
+
+tasks.register('runEjercicio4', JavaExec) {
+    group = 'application'
+    description = 'Ejecuta co.com.bancolombia.ejercicio4.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'co.com.bancolombia.ejercicio4.Main'
+}
+
+tasks.register('explodedJar', Copy) {
+    with jar
+    into layout.buildDirectory.dir("exploded")
+}
+
+jar {
+    // To disable the *-plain.jar
+    enabled = false
+}
+
+bootJar {
+    // Sets output jar name
+    archiveFileName = "${project.getParent().getName()}.${archiveExtension.get()}"
+}

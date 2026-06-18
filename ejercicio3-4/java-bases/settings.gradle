@@ -1,0 +1,17 @@
+pluginManagement {
+    repositories {
+        //mavenLocal()
+        gradlePluginPortal()
+    }
+}
+
+buildCache {
+    local {
+        directory = new File(rootDir, 'build-cache')
+    }
+}
+
+rootProject.name = 'NameProject'
+
+include ':app-service'
+project(':app-service').projectDir = file('./applications/app-service')
