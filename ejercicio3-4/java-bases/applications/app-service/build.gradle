@@ -2,6 +2,7 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly('org.springframework.boot:spring-boot-devtools')
     testImplementation 'com.tngtech.archunit:archunit:1.4.1'
     testImplementation 'tools.jackson.core:jackson-databind'
@@ -19,6 +20,27 @@ tasks.register('runEjercicio4', JavaExec) {
     description = 'Ejecuta co.com.bancolombia.ejercicio4.Main'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'co.com.bancolombia.ejercicio4.Main'
+}
+
+tasks.register('runVehiculoService', JavaExec) {
+    group = 'application'
+    description = 'Ejecuta el microservicio Vehiculo-Service'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'co.com.bancolombia.ejercicio5_microservicios_demo.vehiculo_service.VehiculoServiceApplication'
+}
+
+tasks.register('runCotizadorService', JavaExec) {
+    group = 'application'
+    description = 'Ejecuta el microservicio Cotizador-Service'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'co.com.bancolombia.ejercicio5_microservicios_demo.cotizador_service.CotizadorServiceApplication'
+}
+
+tasks.register('runFlotaService', JavaExec) {
+    group = 'application'
+    description = 'Ejecuta el microservicio Flota-Service'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'co.com.bancolombia.ejercicio5_microservicios_demo.flota_service.FlotaServiceApplication'
 }
 
 tasks.register('explodedJar', Copy) {
