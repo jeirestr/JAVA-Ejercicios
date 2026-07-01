@@ -1,6 +1,8 @@
 package co.com.bancolombia.ejercicio5_microservicios.flota_service.controller;
 
-import co.com.bancolombia.ejercicio5_microservicios.flota_service.client.FlotaClient;
+import co.com.bancolombia.ejercicio5_microservicios.cotizador_service.model.CotizacionRequest;
+import co.com.bancolombia.ejercicio5_microservicios.flota_service.client.CotizadorClient;
+import co.com.bancolombia.ejercicio5_microservicios.flota_service.client.VehiculoClient;
 import co.com.bancolombia.ejercicio5_microservicios.flota_service.dto.CotizacionFlotaResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,19 +14,21 @@ import java.util.Map;
 @RequestMapping("/flota")
 public class FlotaController {
 
-    private final FlotaClient flotaClient;
+    private final VehiculoClient vehiculoClient;
+    private final CotizadorClient cotizadorClient;
 
-    public FlotaController(FlotaClient flotaClient) {
-        this.flotaClient = flotaClient;
+    public FlotaController(VehiculoClient vehiculoClient, CotizadorClient cotizadorClient) {
+        this.vehiculoClient = vehiculoClient;
+        this.cotizadorClient = cotizadorClient;
     }
 
     @GetMapping("/cotizar")
     public Map<String, Object> cotizarFlota(@RequestParam double distancia) {
 
-        // 1. Obtener todos los vehículos
-        List<Map> vehiculos = flotaClient.obtenerVehiculos();
+        // 1. Obtener todos los vehiculos via Feign -> Eureka -> vehiculo-service
+        List<Map> vehiculos = vehiculoClient.obtenerVehiculos();
 
-        // 2. Cotizar cada vehículo
+        // 2. Cotizar cada vehiculo via Feign -> Eureka -> cotizador-service
         List<CotizacionFlotaResponse> cotizaciones = new ArrayList<>();
         CotizacionFlotaResponse masEconomico = null;
 
@@ -35,8 +39,8 @@ public class FlotaController {
             String marca = (String) vehiculo.get("marca");
             String modelo = (String) vehiculo.get("modelo");
 
-            // Llamar a cotizador-service
-            Map resultado = flotaClient.cotizarVehiculo(tipo, distancia, consumoPorKm);
+            CotizacionRequest request = new CotizacionRequest(tipo, distancia, consumoPorKm);
+            Map resultado = cotizadorClient.cotizarVehiculo(request);
             double costo = ((Number) resultado.get("costo")).doubleValue();
 
             CotizacionFlotaResponse cotizacion = new CotizacionFlotaResponse(
@@ -44,12 +48,10 @@ public class FlotaController {
             );
             cotizaciones.add(cotizacion);
 
-            // Buscar el más económico)
             if (masEconomico == null || costo < masEconomico.getCosto()) {
                 masEconomico = cotizacion;
             }
         }
-
 
         return Map.of(
                 "distanciaKm", distancia,

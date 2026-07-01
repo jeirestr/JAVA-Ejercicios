@@ -1,0 +1,42 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: eureka-dashboard
+              uri: http://localhost:8761
+              predicates:
+                - Path=/eureka-web/**
+              filters:
+                - RewritePath=/eureka-web/?(?<segment>.*), /$\{segment}
+            - id: vehiculos-service
+              uri: lb://vehiculo-service
+              predicates:
+                - Path=/vehiculos,/vehiculos/**
+            - id: cotizar-service
+              uri: lb://cotizador-service
+              predicates:
+                - Path=/cotizar,/cotizar/**
+            - id: flota-service
+              uri: lb://flota-service
+              predicates:
+                - Path=/flota,/flota/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
